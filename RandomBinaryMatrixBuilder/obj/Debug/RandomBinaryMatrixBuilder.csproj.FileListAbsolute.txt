@@ -4,3 +4,9 @@ C:\Users\Rik\Documents\Visual Studio 2017\Projects\RandomBinaryMatrixBuilder\Ran
 C:\Users\Rik\Documents\Visual Studio 2017\Projects\RandomBinaryMatrixBuilder\RandomBinaryMatrixBuilder\obj\Debug\RandomBinaryMatrixBuilder.csprojResolveAssemblyReference.cache
 C:\Users\Rik\Documents\Visual Studio 2017\Projects\RandomBinaryMatrixBuilder\RandomBinaryMatrixBuilder\obj\Debug\RandomBinaryMatrixBuilder.exe
 C:\Users\Rik\Documents\Visual Studio 2017\Projects\RandomBinaryMatrixBuilder\RandomBinaryMatrixBuilder\obj\Debug\RandomBinaryMatrixBuilder.pdb
+C:\Users\Rik\Documents\GitHub\MatrixRandomizer\RandomBinaryMatrixBuilder\bin\Debug\RandomBinaryMatrixBuilder.exe.config
+C:\Users\Rik\Documents\GitHub\MatrixRandomizer\RandomBinaryMatrixBuilder\bin\Debug\RandomBinaryMatrixBuilder.exe
+C:\Users\Rik\Documents\GitHub\MatrixRandomizer\RandomBinaryMatrixBuilder\bin\Debug\RandomBinaryMatrixBuilder.pdb
+C:\Users\Rik\Documents\GitHub\MatrixRandomizer\RandomBinaryMatrixBuilder\obj\Debug\RandomBinaryMatrixBuilder.csprojResolveAssemblyReference.cache
+C:\Users\Rik\Documents\GitHub\MatrixRandomizer\RandomBinaryMatrixBuilder\obj\Debug\RandomBinaryMatrixBuilder.exe
+C:\Users\Rik\Documents\GitHub\MatrixRandomizer\RandomBinaryMatrixBuilder\obj\Debug\RandomBinaryMatrixBuilder.pdb
