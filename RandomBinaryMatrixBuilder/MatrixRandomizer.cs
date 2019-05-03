@@ -25,140 +25,132 @@ namespace RandomBinaryMatrixBuilder
             int m = matrix.GetLength(1);
 
             // List of the 1's in general and per row.
-            Stack<int>[] rowOnes = new Stack<int>[m];
-            HashSet<int>[] rowOnesSet = new HashSet<int>[m];
-            int[] rowsums = new int[m];
-            Stack<Index> ones = new Stack<Index>();
-            HashSet<Index> onesSet = new HashSet<Index>();
-            for (int j = 0; j < m; j++)
-            {
-                rowOnes[j] = new Stack<int>();
-                rowOnesSet[j] = new HashSet<int>();
-                for (int i = 0; i < n; i++)
-                    if (matrix[i, j] == 1)
-                    {
-                        rowOnes[j].Push(i);
-                        rowOnesSet[j].Add(i);
-                        rowsums[j]++;
-                        ones.Push(new Index(i, j));
-                        onesSet.Add(new Index(i, j));
-                    }
-            }
+            Stack<int>[] rowOnes = getRowStacks(n, m, matrix);
 
             // List of the zeros that lead to 1's.
-            Stack<int>[] feasableRowsForColumn = new Stack<int>[n];
-            HashSet<int>[] feasableRowsForColumnSet = new HashSet<int>[n];
-            for (int i = 0; i < n; i++)
-            {
-                feasableRowsForColumn[i] = new Stack<int>();
-                feasableRowsForColumnSet[i] = new HashSet<int>();
-                for (int j = 0; j < m; j++)
-                    if (matrix[i, j] == 0 && rowOnes[j].Count > 0)
-                    {
-                        if(!feasableRowsForColumnSet[i].Contains(j))
-                            feasableRowsForColumn[i].Push(j);
-                        feasableRowsForColumnSet[i].Add(j);
-                    }
-            }
+            Tuple < Stack<int>[], HashSet<int>[]> colitems = getColumnStacks(n, m, matrix, rowOnes);
+            Stack<int>[] feasableRowsForColumn = colitems.Item1;
+            HashSet<int>[] feasableRowsForColumnSet = colitems.Item2;
 
             // Order randomization of all stacks.
             for (int i = 0; i < n; i++)
                 feasableRowsForColumn[i].Shuffle();
             for (int j = 0; j < m; j++)
                 rowOnes[j].Shuffle();
-            ones.Shuffle();
 
-            // Get some random cycles.
-            List<Stack<Index>> cycles = new List<Stack<Index>>();
-            HashSet<int> visitedColumns = new HashSet<int>();
-            HashSet<Index> visitedOnes = new HashSet<Index>();
-            Stack<Index> currentPath = new Stack<Index>();
-            while (onesSet.Count > 0)
+            // Copy input matrix.
+            int[,] finalmatrix = new int[n, m];
+            for(int i = 0; i < n; i++)
+                for(int j = 0; j < m; j++)
+                    finalmatrix[i, j] = matrix[i, j];
+
+            // Get stacks ready for random choosing.
+            List<int> nonemptystacks = new List<int>();
+            for (int i = 0; i < n; i++)
+                if (feasableRowsForColumn[i].Count > 0)
+                    nonemptystacks.Add(i);
+
+            // While we have not evaluated all values.
+            bool[] zerosvisitedcolumn = new bool[n];
+            Stack<Index> traversals = new Stack<Index>();
+            List<Index> changes = new List<Index>();
+            while (nonemptystacks.Count > 0)
             {
-                Index current = ones.Pop();
-                if (currentPath.Count == 0)
+                // Get the column that should have the zero to start from.
+                int colzero = 0;
+                if (traversals.Count == 0)
                 {
-                    visitedColumns = new HashSet<int>();
-                    while (ones.Count > 0 && visitedOnes.Contains(current))
-                        current = ones.Pop();
+                    // Choose starting point for path.
+                    colzero = nonemptystacks[random.Next(0, nonemptystacks.Count)];
 
-                    visitedColumns.Add(current.i);
-                    currentPath.Push(current);
                 }
                 else
                 {
-                    Index last = currentPath.Pop();
-                    if (random.Next(0, feasableRowsForColumnSet[last.i].Count + 1) != 0)
+                    // regular traversal, go further where we last left off.
+                    Index last = traversals.Pop();
+                    colzero = last.i;
+                    if (feasableRowsForColumnSet[colzero].Count == 0)
                     {
-                        currentPath.Push(last);
-                        while (feasableRowsForColumn[last.i].Count > 0 && visitedOnes.Contains(current))
-                        {
-                            int nextrow = feasableRowsForColumn[last.i].Pop();
-                            while (feasableRowsForColumn[last.i].Count > 0 && !feasableRowsForColumn[last.i].Contains(current.j))
-                                nextrow = feasableRowsForColumn[last.i].Pop();
+                        zerosvisitedcolumn[traversals.Pop().i] = false;
+                    }
+                    else
+                    {
+                        traversals.Push(last);
+                    }
+                }
 
-                            int nextcolumn = rowOnes[nextrow].Pop();
-                            if(rowOnes[nextrow].Count == 0)
-                                for (int i = 0; i < n; i++)
-                                    feasableRowsForColumnSet[i].Remove(nextrow);
-                            current = new Index(nextrow, nextcolumn);
-                        }
-                        currentPath.Push(current);
-                        if(!visitedColumns.Contains(current.i))
-                            visitedColumns.Add(current.i);
-                        else
+                if (feasableRowsForColumnSet[colzero].Count != 0)
+                {
+                    // Get the one.
+                    int row = feasableRowsForColumn[colzero].Pop();
+                    while (!feasableRowsForColumnSet[colzero].Contains(row)) // Used to correct for mismatch with the hashset.
+                        row = feasableRowsForColumn[colzero].Pop();
+                    int colone = rowOnes[row].Pop();
+                    if (rowOnes[row].Count == 0)
+                    {
+                        // Don't use this row anymore.
+                        for (int i = 0; i < n; i++)
                         {
-                            // Build cycle and store it.
-                            last = currentPath.Pop();
-                            Stack<Index> cycle = new Stack<Index>();
-                            cycle.Push(last);
-                            Index top = currentPath.Pop();
-                            while(top.i != last.i)
-                            {
-                                cycle.Push(top);
-                                visitedColumns.Remove(top.i);
-                                if (currentPath.Count > 0)
-                                    top = currentPath.Pop();
-                                else
-                                    top.i = last.i;
-                            }
-                            cycles.Add(cycle);
+                            feasableRowsForColumnSet[i].Remove(row);
+                            if (feasableRowsForColumnSet[i].Count == 0)
+                                nonemptystacks.Remove(i);
                         }
                     }
                     else
                     {
-                        visitedColumns.Remove(last.i);
+                        // Don't use this rowzero in combination with this 1 anymore.
+                        feasableRowsForColumnSet[colzero].Remove(row);
+                        if (feasableRowsForColumnSet[colzero].Count == 0)
+                            nonemptystacks.Remove(colzero);
+                    }
+
+                    // Sample the fixing chance uniformly from all the other traversals that are possible.
+                    if (random.Next(0, feasableRowsForColumnSet[colone].Count + 1) != 0)
+                    {
+                        // We decided not to make this a fixed point.
+
+                        // We've got a cycle.
+                        if (zerosvisitedcolumn[colone] == true)
+                        {
+                            changes.Add(new Index(colzero, row));
+                            changes.Add(new Index(colone, row));
+
+                            Index current = traversals.Pop();
+                            while (traversals.Count > 0 && current.i != colone)
+                            {
+                                changes.Add(current);
+                                zerosvisitedcolumn[current.i] = false;
+                                current = traversals.Pop();
+                            }
+                            changes.Add(current);
+                            zerosvisitedcolumn[current.i] = false;
+                        }
+                        else
+                        {
+                            // No cycle, go on with traversal.
+                            traversals.Push(new Index(colzero, row));
+                            traversals.Push(new Index(colone, row));
+                            zerosvisitedcolumn[colzero] = true;
+                        }
+                    }
+                    else
+                    {
+                        // We decided to fix this point.
+
+                        // Backtrack.
+                        if (traversals.Count > 1)
+                        {
+                            traversals.Pop();
+                            colzero = traversals.Pop().i;
+                            zerosvisitedcolumn[colzero] = false;
+                        }
                     }
                 }
-                visitedOnes.Add(current);
-                onesSet.Remove(current);
             }
-            
 
-            // Apply transformations for final matrix.
-            int[,] finalmatrix = new int[n, m];
-            HashSet<Index> changes = new HashSet<Index>();
-            foreach(Stack<Index> cycle in cycles)
-            {
-                Index first = cycle.Pop();
-                changes.Add(first);
-                Index last = first;
-                Index current;
-                while(cycle.Count > 0)
-                {
-                    current = cycle.Pop();
-                    changes.Add(new Index(current.i, last.j));
-                    changes.Add(current);
-                    last = current;
-                }
-            }
-            for(int i = 0; i < n; i++)
-                for(int j = 0; j < m; j++)
-                {
-                    finalmatrix[i, j] = matrix[i, j];
-                    if(changes.Contains(new Index(i, j)))
-                        finalmatrix[i, j] ^= 1;
-                }
+            // Make the computed changes.
+            foreach(Index change in changes)
+                finalmatrix[change.i, change.j] ^= 1;
 
             return finalmatrix;
         }
@@ -172,6 +164,41 @@ namespace RandomBinaryMatrixBuilder
                 stack.Push(value);
         }
 
+        private static Stack<int>[] getRowStacks(int n, int m, int[,] matrix)
+        {
+            Stack<int>[] rowOnes = new Stack<int>[m];
+            int[] rowsums = new int[m];
+            for (int j = 0; j < m; j++)
+            {
+                rowOnes[j] = new Stack<int>();
+                for (int i = 0; i < n; i++)
+                    if (matrix[i, j] == 1)
+                    {
+                        rowOnes[j].Push(i);
+                        rowsums[j]++;
+                    }
+            }
+            return rowOnes;
+        }
+
+        private static Tuple<Stack<int>[], HashSet<int>[]> getColumnStacks(int n, int m, int[,] matrix, Stack<int>[] rowOnes)
+        {
+            Stack<int>[] feasableRowsForColumn = new Stack<int>[n];
+            HashSet<int>[] feasableRowsForColumnSet = new HashSet<int>[n];
+            for (int i = 0; i < n; i++)
+            {
+                feasableRowsForColumn[i] = new Stack<int>();
+                feasableRowsForColumnSet[i] = new HashSet<int>();
+                for (int j = 0; j < m; j++)
+                    if (matrix[i, j] == 0 && rowOnes[j].Count > 0)
+                    {
+                        if (!feasableRowsForColumnSet[i].Contains(j))
+                            feasableRowsForColumn[i].Push(j);
+                        feasableRowsForColumnSet[i].Add(j);
+                    }
+            }
+            return new Tuple<Stack<int>[], HashSet<int>[]>(feasableRowsForColumn, feasableRowsForColumnSet);
+        }
     }
 
     struct Index

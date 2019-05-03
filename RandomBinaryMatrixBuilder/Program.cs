@@ -11,8 +11,8 @@ namespace RandomBinaryMatrixBuilder
         static void Main(string[] args)
         {
             // Build matrix to test with randomly.
-            int n = 500;
-            int m = 500;
+            int n = 30;
+            int m = 1000000;
             int[,] testmatrix = TestMatrixGenerator.GetMatrix(n, m);
 
             // Randomize matrix.
@@ -29,36 +29,70 @@ namespace RandomBinaryMatrixBuilder
                 for (int j = 0; j < m; j++)
                 {
                     count = testmatrix[i, j] == randomizedmatrix[i, j] ? count : count + 1;
-                    if(testmatrix[i,j] == 1)
+                    if (testmatrix[i, j] == 1)
                     {
                         columnsums[i]++;
                         rowsums[j]++;
+                    }
+                    if (randomizedmatrix[i, j] == 1)
+                    {
                         columnsumsrandomized[i]++;
                         rowsumsrandomized[j]++;
                     }
-
                 }
 
             }
 
-
+            bool perfect = true;
             for (int i = 0; i < n; i++)
             {
                 if (columnsums[i] != columnsumsrandomized[i])
-                    Console.WriteLine("Auwas row");
-                else
-                {
-                    Console.WriteLine("hmm" + i);
-                }
+                    perfect = false;
             }
             for (int j = 0; j < m; j++)
             {
                 if (rowsums[j] != rowsumsrandomized[j])
-                    Console.WriteLine("Auwas column");
+                    perfect = false;
+            }
+
+            List<string> lines = new List<string>();
+            List<string> lines2 = new List<string>();
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < m; j++)
+                {
+                    if (testmatrix[i, j] == 1)
+                    {
+                        lines.Add((i+1) + "\t" + (j + 1) + "\t" + "1.000000000000000");
+                    }
+
+                    if (randomizedmatrix[i, j] == 1)
+                    {
+                        lines2.Add((i + 1) + "\t" + (j + 1) + "\t" + "1.000000000000000");
+                    }
+                }
+
+            using (System.IO.StreamWriter file =
+            new System.IO.StreamWriter(@"C:\Users\Rik\Desktop\data.dat"))
+            {
+                file.WriteLine(n + "\t" + m + "\t" + lines.Count);
+                foreach (string line in lines)
+                    file.WriteLine(line);
+            }
+
+
+            using (System.IO.StreamWriter file =
+            new System.IO.StreamWriter(@"C:\Users\Rik\Desktop\datarand.dat"))
+            {
+                file.WriteLine(n + "\t" + m + "\t" + lines2.Count);
+                foreach (string line in lines2)
+                    file.WriteLine(line);
             }
 
             // Output result.
-            Console.WriteLine(count);
+            if (perfect)
+                Console.WriteLine("Perfect transformation with " + count + " value differences.");
+            else
+                Console.WriteLine("Not a perfect transformation");
 
             // Wait for key to exit.
             Console.ReadKey();
