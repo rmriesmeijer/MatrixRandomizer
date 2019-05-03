@@ -11,14 +11,14 @@ namespace RandomBinaryMatrixBuilder
         static void Main(string[] args)
         {
             // Build matrix to test with randomly.
-            int n = 30;
-            int m = 1000000;
+            int n = 100;
+            int m = 100;
             int[,] testmatrix = TestMatrixGenerator.GetMatrix(n, m);
 
             // Randomize matrix.
             int[,] randomizedmatrix = MatrixRandomizer.Randomize(testmatrix);
 
-            // Count differences.
+            // Count differences and row and column sums.
             int count = 0;
             int[] columnsums = new int[n];
             int[] rowsums = new int[m];
@@ -43,18 +43,16 @@ namespace RandomBinaryMatrixBuilder
 
             }
 
+            // Check whether there is no difference in column and row sums.
             bool perfect = true;
             for (int i = 0; i < n; i++)
-            {
                 if (columnsums[i] != columnsumsrandomized[i])
                     perfect = false;
-            }
             for (int j = 0; j < m; j++)
-            {
                 if (rowsums[j] != rowsumsrandomized[j])
                     perfect = false;
-            }
 
+            // Output .dat files for matlab examination.
             List<string> lines = new List<string>();
             List<string> lines2 = new List<string>();
             for (int i = 0; i < n; i++)
@@ -70,18 +68,15 @@ namespace RandomBinaryMatrixBuilder
                         lines2.Add((i + 1) + "\t" + (j + 1) + "\t" + "1.000000000000000");
                     }
                 }
-
             using (System.IO.StreamWriter file =
-            new System.IO.StreamWriter(@"C:\Users\Rik\Desktop\data.dat"))
+            new System.IO.StreamWriter(@"C:\Users\rmrie\Desktop\data.dat"))
             {
                 file.WriteLine(n + "\t" + m + "\t" + lines.Count);
                 foreach (string line in lines)
                     file.WriteLine(line);
             }
-
-
             using (System.IO.StreamWriter file =
-            new System.IO.StreamWriter(@"C:\Users\Rik\Desktop\datarand.dat"))
+            new System.IO.StreamWriter(@"C:\Users\rmrie\Desktop\datarand.dat"))
             {
                 file.WriteLine(n + "\t" + m + "\t" + lines2.Count);
                 foreach (string line in lines2)
