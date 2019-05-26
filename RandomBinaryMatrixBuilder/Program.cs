@@ -11,8 +11,8 @@ namespace RandomBinaryMatrixBuilder
         static void Main(string[] args)
         {
             // Build matrix to test with randomly.
-            int n = 30;
-            int m = 1000000;
+            int m = 10;
+            int n = 10;
             int[,] testmatrix = TestMatrixGenerator.GetMatrix(n, m);
 
             // Randomize matrix.
@@ -43,11 +43,31 @@ namespace RandomBinaryMatrixBuilder
 
             }
 
+            Graph g = new Graph(rowsums, columnsums);
+            testmatrix = g.GetRandomMatrix();
+
+
+
+            columnsumsrandomized = new int[n];
+            rowsumsrandomized = new int[m];
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    if (randomizedmatrix[i, j] == 1)
+                    {
+                        columnsumsrandomized[i]++;
+                        rowsumsrandomized[j]++;
+                    }
+                }
+
+            }
+
             bool perfect = true;
             for (int i = 0; i < n; i++)
             {
                 if (columnsums[i] != columnsumsrandomized[i])
-                    perfect = false;
+                    Console.WriteLine(columnsumsrandomized[i]);
             }
             for (int j = 0; j < m; j++)
             {
