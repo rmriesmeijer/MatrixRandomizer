@@ -10,3 +10,10 @@ C:\Users\Rik\Documents\GitHub\MatrixRandomizer\RandomBinaryMatrixBuilder\bin\Deb
 C:\Users\Rik\Documents\GitHub\MatrixRandomizer\RandomBinaryMatrixBuilder\obj\Debug\RandomBinaryMatrixBuilder.csprojResolveAssemblyReference.cache
 C:\Users\Rik\Documents\GitHub\MatrixRandomizer\RandomBinaryMatrixBuilder\obj\Debug\RandomBinaryMatrixBuilder.exe
 C:\Users\Rik\Documents\GitHub\MatrixRandomizer\RandomBinaryMatrixBuilder\obj\Debug\RandomBinaryMatrixBuilder.pdb
+C:\Users\rmrie\Documents\GitHub\its-chatbot\MatrixRandomizer\RandomBinaryMatrixBuilder\bin\Debug\RandomBinaryMatrixBuilder.exe.config
+C:\Users\rmrie\Documents\GitHub\its-chatbot\MatrixRandomizer\RandomBinaryMatrixBuilder\bin\Debug\RandomBinaryMatrixBuilder.exe
+C:\Users\rmrie\Documents\GitHub\its-chatbot\MatrixRandomizer\RandomBinaryMatrixBuilder\bin\Debug\RandomBinaryMatrixBuilder.pdb
+C:\Users\rmrie\Documents\GitHub\its-chatbot\MatrixRandomizer\RandomBinaryMatrixBuilder\obj\Debug\RandomBinaryMatrixBuilder.csprojAssemblyReference.cache
+C:\Users\rmrie\Documents\GitHub\its-chatbot\MatrixRandomizer\RandomBinaryMatrixBuilder\obj\Debug\RandomBinaryMatrixBuilder.csproj.CoreCompileInputs.cache
+C:\Users\rmrie\Documents\GitHub\its-chatbot\MatrixRandomizer\RandomBinaryMatrixBuilder\obj\Debug\RandomBinaryMatrixBuilder.exe
+C:\Users\rmrie\Documents\GitHub\its-chatbot\MatrixRandomizer\RandomBinaryMatrixBuilder\obj\Debug\RandomBinaryMatrixBuilder.pdb

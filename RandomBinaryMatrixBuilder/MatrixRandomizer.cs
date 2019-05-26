@@ -71,19 +71,22 @@ namespace RandomBinaryMatrixBuilder
                     colzero = last.i;
                     if (feasableRowsForColumnSet[colzero].Count == 0)
                     {
+                        // We cannot traverse and shall backtrack.
                         zerosvisitedcolumn[traversals.Pop().i] = false;
                     }
                     else
                     {
+                        // Undo the pop we did if we can traverse using this last index.
                         traversals.Push(last);
                     }
                 }
 
+                // If there is a valid traversal from our current endpoint we will compute it.
                 if (feasableRowsForColumnSet[colzero].Count != 0)
                 {
                     // Get the one.
                     int row = feasableRowsForColumn[colzero].Pop();
-                    while (!feasableRowsForColumnSet[colzero].Contains(row)) // Used to correct for mismatch with the hashset.
+                    while (!feasableRowsForColumnSet[colzero].Contains(row)) // Used to correct for mismatch with the hashset and keep linear time.
                         row = feasableRowsForColumn[colzero].Pop();
                     int colone = rowOnes[row].Pop();
                     if (rowOnes[row].Count == 0)
@@ -164,23 +167,35 @@ namespace RandomBinaryMatrixBuilder
                 stack.Push(value);
         }
 
+        /// <summary>
+        /// Gets stacks of indices that contain a one in a row of the matrix.
+        /// </summary>
+        /// <param name="n">Number of columns.</param>
+        /// <param name="m">Number of rows.</param>
+        /// <param name="matrix">The binary matrix we are evaluating.</param>
+        /// <returns></returns>
         private static Stack<int>[] getRowStacks(int n, int m, int[,] matrix)
         {
+            // Simply iterate through all rows and put the ones in the row on a stack.
             Stack<int>[] rowOnes = new Stack<int>[m];
-            int[] rowsums = new int[m];
             for (int j = 0; j < m; j++)
             {
                 rowOnes[j] = new Stack<int>();
                 for (int i = 0; i < n; i++)
                     if (matrix[i, j] == 1)
-                    {
                         rowOnes[j].Push(i);
-                        rowsums[j]++;
-                    }
             }
             return rowOnes;
         }
 
+        /// <summary>
+        /// Gets rows that have a zero in this column but are not empty, usefull for traversal.
+        /// </summary>
+        /// <param name="n">Number of columns.</param>
+        /// <param name="m">Number of rows.</param>
+        /// <param name="matrix">The binary matrix we are evaluating.</param>
+        /// <param name="rowOnes">Stacks of ones per row to indicate if rows are not empty.</param>
+        /// <returns></returns>
         private static Tuple<Stack<int>[], HashSet<int>[]> getColumnStacks(int n, int m, int[,] matrix, Stack<int>[] rowOnes)
         {
             Stack<int>[] feasableRowsForColumn = new Stack<int>[n];
